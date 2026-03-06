@@ -4,12 +4,12 @@ const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 // Default location: Cinambo, Bandung, Indonesia
 const DEFAULT_LOCATION = {
-    name: 'Cinambo',
+    name: 'Taman Pramuka',
     city: 'Bandung',
     region: 'West Java',
     country: 'Indonesia',
-    lat: -6.9175,
-    lon: 107.6191
+    lat: -6.9147500,
+    lon: 107.6111875
 };
 
 // Weather icon mapping
