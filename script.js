@@ -175,34 +175,91 @@ function setupSearch() {
 }
 
 // Search for location
+// 🔧 Fungsi pencarian lokasi (VERSI DIPERBAIKI)
 async function searchLocation() {
-    const query = document.getElementById('searchInput').value.trim();
+    const searchInput = document.getElementById('searchInput');
+    const query = searchInput.value.trim();
     
     if (!query) {
-        alert('Please enter a city name');
+        alert('❌ Harap masukkan nama kota');
         return;
     }
     
+    // Loading state
+    const searchBtn = document.getElementById('searchBtn');
+    const originalBtnText = searchBtn.innerHTML;
+    searchBtn.innerHTML = '⏳ Mencari...';
+    searchBtn.disabled = true;
+    
     try {
-        const response = await fetch(
-            `${BASE_URL}/geo/1.0?q=${query}&limit=1&appid=${API_KEY}`
-        );
+        console.log('🔍 Mencari lokasi:', query);
         
-        if (!response.ok) throw new Error('Location not found');
+        // Coba beberapa format pencarian
+        const searchQueries = [
+            query,                                    // Query asli
+            `${query},Indonesia`,                     // Dengan Indonesia
+            `${query},ID`,                            // Dengan ID
+            query.replace(/,\s*ID$/, ''),             // Tanpa ID jika ada
+        ];
         
-        const data = await response.json();
+        let locationData = null;
+        let usedQuery = '';
         
-        if (data.length === 0) throw new Error('Location not found');
+        // Coba satu per satu sampai berhasil
+        for (const q of searchQueries) {
+            const url = `${BASE_URL}/geo/1.0?q=${encodeURIComponent(q)}&limit=1&appid=${API_KEY}`;
+            console.log('📡 Request:', url);
+            
+            const response = await fetch(url);
+            console.log('📊 Status:', response.status);
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    locationData = data[0];
+                    usedQuery = q;
+                    break;
+                }
+            } else if (response.status === 401) {
+                throw new Error('⚠️ API Key tidak valid. Periksa kembali API Key Anda di script.js');
+            } else if (response.status === 429) {
+                throw new Error('⏱️ Terlalu banyak permintaan. Tunggu 10 detik dan coba lagi.');
+            }
+        }
         
-        const { lat, lon, name, country } = data[0];
+        // Jika semua query gagal
+        if (!locationData) {
+            throw new Error(`❌ Lokasi "${query}" tidak ditemukan.\n\nCoba:\n• Gunakan nama kota besar (Bandung, Jakarta, Surabaya)\n• Periksa ejaan\n• Pastikan API Key sudah aktif`);
+        }
         
-        document.getElementById('location').textContent = `${name}, ${country}`;
-        document.getElementById('searchInput').value = '';
+        console.log('✅ Lokasi ditemukan:', locationData);
         
-        fetchWeather(lat, lon);
-        fetchForecast(lat, lon);
+        // Tampilkan data lokasi
+        const { name, lat, lon, country, state } = locationData;
+        const locationName = state ? `${name}, ${state}` : name;
+        
+        // Update UI
+        document.getElementById('location').textContent = `${locationName}, ${country}`;
+        searchInput.value = '';
+        
+        // Ambil data cuaca
+        console.log('🌤️ Mengambil data cuaca untuk:', lat, lon);
+        await fetchWeather(lat, lon);
+        await fetchForecast(lat, lon);
+        
+        // Update peta
+        if (typeof updateRainMapLocation === 'function') {
+            updateRainMapLocation(lat, lon);
+        }
+        
+        console.log('✅ Selesai! Cuaca untuk', locationName, 'sudah ditampilkan');
         
     } catch (error) {
-        alert(`❌ ${error.message}`);
+        console.error('❌ Error search:', error);
+        alert(error.message);
+    } finally {
+        // Reset tombol
+        searchBtn.innerHTML = originalBtnText;
+        searchBtn.disabled = false;
     }
 }
