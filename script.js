@@ -2,7 +2,7 @@
 const API_KEY = '4880fb642f3b1da22fa00993eaad462e'; // Replace with your actual API key
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-// Default location: Cinambo, Bandung, Indonesia
+// Default location: Taman Pramuka, Bandung, Indonesia
 const DEFAULT_LOCATION = {
     name: 'Taman Pramuka',
     city: 'Bandung',
