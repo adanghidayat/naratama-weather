@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast - Cinambo, Bandung</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌤️ Weather Forecast</h1>
+            <p class="location" id="location">Cinambo, Kota Bandung, West Java, Indonesia</p>
+        </header>
+
+        <!-- Current Weather -->
+        <section class="current-weather" id="currentWeather">
+            <div class="loading">Loading weather data...</div>
+        </section>
+
+        <!-- 7-Day Forecast -->
+        <section class="forecast">
+            <h2>📅 7-Day Forecast</h2>
+            <div class="forecast-grid" id="forecastGrid">
+                <div class="loading">Loading forecast...</div>
+            </div>
+        </section>
+
+        <!-- Search Location -->
+        <section class="search">
+            <input type="text" id="searchInput" placeholder="Search city (e.g., Bandung, Jakarta)">
+            <button id="searchBtn">🔍 Search</button>
+        </section>
+
+        <footer>
+            <p>Data from <a href="https://openweathermap.org/" target="_blank">OpenWeatherMap</a></p>
+            <p>🇮🇩 Also check <a href="https://www.bmkg.go.id/" target="_blank">BMKG Indonesia</a> for official alerts</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
